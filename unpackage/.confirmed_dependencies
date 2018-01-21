@@ -1,0 +1,23 @@
+{
+	"index.html": {
+		"resources": [
+			"main.html"
+		],
+		"refer": [
+			"main.html",
+			"main1.html",
+			"main2.html"
+		]
+	},
+	"main.html": {
+		"resources": [
+			"index.html"
+		],
+		"refer": [
+			"index.html",
+			"my.html",
+			"index1.html",
+			"index2.html"
+		]
+	}
+}
