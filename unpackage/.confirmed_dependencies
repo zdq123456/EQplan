@@ -19,5 +19,10 @@
 			"index1.html",
 			"index2.html"
 		]
+	},
+	"login.html": {
+		"refer": [
+			"register.html"
+		]
 	}
 }

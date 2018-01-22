@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link href="css/style.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">用户登陆</h1>
+		</header>
+		<div class="mui-content-padded" style="margin:5px;">  
+		    <form class="mui-input-group" style="top:100px;">  
+		        <div class="mui-input-row">  	          
+		            <input type="text" id="username" placeholder="请输入手机号">  
+		        </div>
+		        <div class="mui-input-row">  
+		            <input type="password" id="userpassword" placeholder="请输入密码">  
+		        </div>
+		    </form>  
+		</div>  
+		<div style="margin-top:150px;text-align: center;">  
+		    <button class="mui-btn mui-btn-primary" id="loginBtn" style="width:150px;">登录</button>  
+		    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="mui-btn mui-btn-primary" id="regBtn" style="width:150px;">没有账号，去注册</button>  
+		</div>  
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			mui.plusReady(function(){
+				document.getElementById("regBtn").addEventListener("tap",function(){
+					mui.openWindow({
+						url:'register.html',
+						id:'register.html'
+					});
+				});
+				document.getElementById("loginBtn").addEventListener("tap",function(){
+					var phone=document.getElementById("username").value;
+					var pass=document.getElementById("userpassword").value;
+					if(phone==""){
+						mui.toast("请输入手机号！");
+					}
+					else if(pass==""){
+						mui.toast("请输入密码！");
+					}
+					else{
+						mui.toast("正在提交，请等待。。。。");
+						mui.ajax('http://localhost:8080/',{
+							data:{
+								username:phone,
+								pwd:pass
+							},
+							dataType:'json',
+							type:'post',
+							timeout:10000,
+							headers:{'Content-Type':'application/json'},
+							success:function(data){
+								mui.toast("数据返回来了");
+							},
+							error:function(xhr,type,errorThrown){
+								console.log(type);
+								mui.toast("服务器异常");
+							}
+						});
+					}
+					
+				});
+			});
+		</script>
+	</body>
+
+</html>
