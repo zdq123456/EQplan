@@ -49,23 +49,36 @@
 					}
 					else{
 						mui.toast("正在提交，请等待。。。。");
-						mui.ajax('http://localhost:8080/',{
+						mui.post('http://202.204.197.142:8080/te-empl/mgr/EQlogin/login',
+						{
+							username:phone,
+							pwd:pass
+						},function(data)
+						{
+							//服务器返回响应，根据响应结果，分析是否登录成功；
+							mui.toast(data);
+						},'json'
+					);
+						//http://121.69.82.134:8080/te-empl/mgr/EQlogin/login
+						/*mui.ajax('http://202.204.197.142:8080/te-empl/mgr/EQlogin/login',{
 							data:{
-								username:phone,
-								pwd:pass
+							     username:phone,
+							     pwd:pass
 							},
 							dataType:'json',
-							type:'post',
+							type:'POST',
 							timeout:10000,
 							headers:{'Content-Type':'application/json'},
 							success:function(data){
 								mui.toast("数据返回来了");
+								mui.toast(data);
 							},
 							error:function(xhr,type,errorThrown){
 								console.log(type);
+								mui.toast(errorThrown);
 								mui.toast("服务器异常");
 							}
-						});
+						});*/
 					}
 					
 				});
