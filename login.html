@@ -49,18 +49,18 @@
 					}
 					else{
 						mui.toast("正在提交，请等待。。。。");
-						mui.post('http://202.204.197.142:8080/te-empl/mgr/EQlogin/login',
+						mui.post('http://192.168.1.102:8080/pms/index/loginSubmit',
 						{
 							username:phone,
 							pwd:pass
 						},function(data)
 						{
 							//服务器返回响应，根据响应结果，分析是否登录成功；
-							mui.toast(data);
+							mui.toast(data.message);
 						},'json'
 					);
 						//http://121.69.82.134:8080/te-empl/mgr/EQlogin/login
-						/*mui.ajax('http://202.204.197.142:8080/te-empl/mgr/EQlogin/login',{
+						/*mui.ajax('http://192.168.1.102:8080/pms/index/loginSubmit',{
 							data:{
 							     username:phone,
 							     pwd:pass
