@@ -15,116 +15,152 @@
 		    <h1 class="mui-title">快速注册</h1>
 		</header>
 		<div class="mui-content">
+			<br>
 			<div class="mui-input-row">  	          
-		        <input type="text" id="phone" placeholder="请输入手机号">  
-		    </div>
+		        <input type="text" id="u_name" placeholder="昵称" class="mui-input-clear mui-input-speech">  
+		    </div><br>
+			<div class="mui-input-row">  	          
+		        <input type="text" id="u_phone" placeholder="请输入手机号" class="mui-input-clear mui-input-speech">  
+		    </div><br>
 		    <div class="mui-input-row"> 
-				<input type="text"  placeholder="请输入短信验证码" id="u_code">
+				<input type="text"  placeholder="请输入短信验证码" id="u_code" class="mui-input-clear mui-input-speech">
 				<a href="javascript:senmobile(60);" id="get_code" disabled="true">获取验证码</a>
-			</div>
+			</div><br>
 			<div class="mui-input-row">  
-		        <input type="password" id="passw" placeholder="请输入密码">  
-		    </div>
-		    <div style="margin-top:150px;text-align: center;">  
-		        <button class="mui-btn mui-btn-primary" id="regBtn" style="width:150px;">立即注册</button>   
+		        <input type="password" id="u_password" placeholder="请设置密码（至少6位）" class="mui-input-password">  
+		    </div><br>
+			<div align="center">
+				<input id="u_pro" type="checkbox">
+			    我已阅读并同意<a href="protocol.html">《用户使用协议》</a>		  
+			</div><br>
+		    <div class="mui-content-padded" align="center">  
+		        <button type="button" class="mui-btn mui-btn-primary" id="regBtn" style="width:100%;">立即注册</button>   
 		    </div> 
 		</div>
 		<script src="js/mui.min.js"></script>
 		<script type="text/javascript">
 			mui.init();
+			var server_phone="";//定义保存从服务器端获取验证码的手机号
+			var server_code="";//定义保存从服务器端获取的验证码
 			var issend=true; 
 			function senmobile(t) 
 			{ 
-			     if(issend){ 
+			    if(issend)
+			    {
 			    //验证电话号码手机号码 
-			    var phoneObj = document.getElementById('phone'); 
-			    var pw = document.getElementById('passw'); 
-			    var get_code=document.getElementById('get_code'); 
-			    if (phoneObj.value != ""){  
-			        var phoneVal=phoneObj.value;  
-			        var p1 = /^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/;  
-			        var me = false;  
-			        if (p1.test(phoneVal)) me=true;  
-			        if (!me){  
-			            //phoneObj.value='';  
-			            mui.toast('请输入正确的手机号码'); 
-			            phoneObj.focus();  
-			            return false;  
-			        }else if(pw.value.length<6){ 
-			            mui.toast('密码长度不够6'); 
-			            return false;  
-			        }else{ 
-			             
-			            issend=false; 
-			            mui.ajax({ 
-			                  url:"api_user.php?act=sendmobileregister", 
-			                  dataType:"text", 
-			                  type:"POST", 
-			                  data:{'mobile':phoneObj.value}, 
-			                  success:function(data){ 
-			                    if(data == '1'){
-			                        plus.nativeUI.toast('用户已存在！', {verticalAlign: 'center'}); 
-			                        return false; 
-			                       } 
-			                       var arr = data.split(","); 
-			                        if(arr[1] == '0'){ 
-			                         plus.nativeUI.toast('验证码发送成功！', {verticalAlign: 'center'}); 
-			                        }else{ 
-			                            plus.nativeUI.toast('验证码发送失败！', {verticalAlign: 'center'}); 
-			                        } 
-			                         
-			                        for(i=1;i<=t;i++) {  
-			                            window.setTimeout("update_a(" + i + ","+t+")", i * 1000);  
-			                        }  
-			 
-			                  } 
-			            }); 
-			             
-			        } 
-			    }else{ 
-			        plus.nativeUI.toast('手机号码不能为空！', {verticalAlign: 'center'}); 
-			        return false; 
+				    var phoneObj = document.getElementById('u_phone'); 
+				    var pw = document.getElementById('u_password'); 
+				    var get_code=document.getElementById('get_code'); 
+				    if (phoneObj.value != "")
+				    {
+				        var phoneVal=phoneObj.value;  
+				        var p1 = /^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/;  
+				        var me = false;  
+				        if (p1.test(phoneVal)) me=true;  
+				        if (!me)//if(!me)
+			         	{ 
+				            mui.toast('请输入正确的手机号码'); 
+				            phoneObj.focus();  
+				            return false;  
+			        	}
+			        	else
+			        	{			  
+				            issend=false;
+				            mui.post('http://192.168.1.102:8080/pms/EQregister/getCode',
+								{
+									mobile:phoneObj.value								
+								},function(data)
+								{
+									//服务器返回响应，根据响应结果，分析是否登录成功；
+									if(data.code=="000")//返回值“000”代表成功，“999”代表失败
+									{
+										server_phone=data.message;
+										server_code=data.data;
+										//mui.alert(server_phone);
+										//mui.alert(server_code);
+										mui.toast("发送成功");
+									}
+									else
+									{
+										mui.toast("发送失败");
+									}
+									for(i=1;i<=t;i++) 
+				                    {
+				                        window.setTimeout("update_a(" + i + ","+t+")", i * 1000);  
+				                    } 
+								},'json'
+							);				           			              
+			            } 
+			        }
+				    else
+				    {
+				        plus.nativeUI.toast('手机号码不能为空！', {verticalAlign: 'center'}); 
+				        return false; 
+				    } 
 			    } 
 			} 
-			} 
 			 
-			function update_a(num,t) {  
+			function update_a(num,t) 
+			{
 			    var get_code=document.getElementById('get_code'); 
-			    if(num == t) {  
+			    if(num == t) 
+			    {
 			        get_code.innerHTML =" 重新发送 ";  
 			        issend=true;  
 			    }  
-			    else {  
+			    else 
+			    {
 			       var printnr = t-num;  
 			        get_code.innerHTML =printnr +" 秒后重发";  
 			    }  
 			} 
 			//注册提交
-			document.getElementById("regBtn").addEventListener("tap",function(){
-				//mui.toast("444444444");
-				var phone= document.getElementById('phone').value; 
-			    var pass= document.getElementById('passw').value; 
-			    var get_code=document.getElementById('get_code').value; 
-				mui.ajax('http://localhost:8080/',{
-							data:{
-								username:phone,
-								pwd:pass,
-								code:get_code
-							},
-							dataType:'json',
-							type:'post',
-							timeout:10000,
-							headers:{'Content-Type':'application/json'},
-							success:function(data){
-								mui.toast("数据返回来了");
-							},
-							error:function(xhr,type,errorThrown){
-								console.log(type);
-								mui.toast("服务器异常");
-							}
-					});				
+			document.getElementById("regBtn").addEventListener("tap",function()
+			{
+				//mui.toast("safasf"+server_code);
+				var uname=document.getElementById('u_name').value;
+				var phone= document.getElementById('u_phone').value; 
+			    var pass= document.getElementById('u_password').value; 
+			    var ucode=document.getElementById('u_code').value;
+			    var pro=document.getElementById('u_pro');			
+			    if(uname=="")
+			    {
+			    	mui.toast("请输入昵称");
+			    	return;
+			    }
+			    if(phone=="")
+			    {
+			    	mui.toast("请输入正确的手机号码");
+			    	return;
+			    }
+			    if(ucode==""||ucode!=server_code)
+			    {
+			    	mui.toast("验证码错误");
+			    	return;
+			    }			 			  
+			    if(pass.length<6)
+			    {
+			    	mui.toast("密码长度不足六位");
+			    	return;
+			    }
+			    if(pro.checked==false)
+			    {
+			    	mui.toast("请阅读并同意用户使用协议");
+			    	return;
+			    }
+			    mui.post('http://192.168.1.102:8080/pms/EQregister/register',
+					{
+						username:uname,
+						mobile:phone,
+						pwd:pass								
+					},function(data)
+					{
+						mui.toast(data.message);		
+					},'json'
+				);								
 			});
 		</script>
 	</body>
 
 </html>
+
